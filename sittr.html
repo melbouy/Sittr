@@ -1,0 +1,158 @@
+<head>
+  <title>sittr</title>
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+</head>
+
+<body>
+    {{>preLoader}}
+    {{>page}}
+</body>
+
+<template name="preLoader">
+    <div id="preLoadDiv" class="container fullBody">
+        <div id="preloadImage">
+            <center>
+                <img src="preLoader.png" alt="">
+                <p>
+                    <br>
+                    <small>Preview | v.0.2</small>
+                </p>
+            </center>
+        </div>
+    </div>   
+</template>
+
+<template name="page">
+    {{#if showCreateDialog}}
+        <div id="formBox">
+            {{> createDialog}}
+        </div>
+    {{/if}}
+    
+    {{> navbar}}
+    
+    {{> bookingform}}
+    
+    {{> bookinglist}}
+</template>
+
+<template name="navbar">
+    <div class="navbar navbar-fixed-top">
+      <div class="navbar-inner">
+          <div class="row" style="margin: 0 10px;">
+            <div id="currentTime" class="span2"><h1 id="time"></h1></div>
+            <div id="navInts" class="align-right" style="margin-top: 20px;">
+              <i id="clearBookings" class="large red gen-enclosed foundicon-trash"></i>
+              <i id="addBooking" class="large blue gen-enclosed foundicon-plus"></i>
+            </div>
+          </div>          
+      </div>
+    </div>
+</template>
+
+<template name="bookingform">
+    <div id="formPage" class="row {{#if showForm}}pushDown{{/if}}">
+        {{#if showForm}}
+           <div class="topForm">
+                <form class="form-inline row">
+                    <div>
+                        <input id="name" type="text" placeholder="Name">
+                        <input id="pax" type="text" pattern="[0-9]*" placeholder="Pax">
+                        <input id="number" type="text" pattern="[0-9]*" placeholder="Phone">
+                        <input id="table" type="text" placeholder="Table"> 
+                        
+                        <div id="formInts">
+                            <i id="formCancel" class="large red gen-enclosed foundicon-remove"></i>
+                            <i id="formSubmit" class="large green gen-enclosed foundicon-checkmark"></i>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        {{/if}}
+    </div>
+</template>
+
+<template name="bookinglist">
+    {{#if bookings}}
+        {{#each bookings}}
+            <div class="booking row {{#if Seated}} success {{/if}} {{#if Cancel}} cancel {{/if}} {{#if showEdit}} edit {{/if}}">
+                {{#if Table}}
+                    <div class="align-left tableDiv large">
+                        <div class="inner">
+                            <i class="gen-enclosed foundicon-flag"></i> <div class="number">{{Table}}</div>
+                        </div>
+                        <div class="tableTriangle"></div>    
+                    </div>                
+                {{/if}}
+                <div class="align-left" style="padding-top: 22px;">
+                    {{#if showEdit}}
+                        <form id="updateForm" class="form-inline">
+                            <input type="text" id="name" value="{{Name}}" placeholder="Name">
+                            <input type="number" id="pax" pattern="[0-9]*" class="numberInput" value="{{Pax}}" placeholder="Pax">
+                            <input type="text" id="number" pattern="[0-9]*" value="{{Number}}" placeholder="Phone">
+                            <input type="text" id="table" class="numberInput"  value="{{Table}}" placeholder="Table">
+                        </form>
+                    {{else}}
+                        <large style="padding-left: 10px;">
+                            <span class="name">{{Name}}</span> 
+                            <span class="subInfo"> / {{Pax}} pax</span>
+                        </large>                             
+                            <span class="smallInfo muted">{{#if Timeago}}Waiting <span class="currentTime">{{Timeago}} minutes</span>{{/if}}{{#if Number}} Phone: {{Number}} {{/if}}</span>
+                    {{/if}}
+                </div>
+                <div class="buttonsDiv align-right">
+                    <div class="expandButtonDiv {{#if expand }}contractButtons{{else}}expandButtons{{/if}} align-left">
+                        <i class="large blue gen-enclosed {{#if expand }}foundicon-right-arrow{{else}}foundicon-left-arrow{{/if}} expandButton"></i>
+                    </div>
+                    
+                    <div class="bookingButtons {{#if expand }}expanded{{/if}} align-right">
+                        {{#if Seated}}
+                            <i class="large red gen-enclosed foundicon-trash bookingDelete"></i>
+                        {{else}}
+                            {{#if Cancel}}
+                                <i class="large red gen-enclosed foundicon-trash bookingDelete"></i>
+                            {{else}}                            
+                                {{#if showEdit}}
+                                    
+                                    <i class="large green gen-enclosed foundicon-checkmark bookingUpdate"></i>
+                                    <i class="large red cancelUpdate gen-enclosed foundicon-remove"></i>
+
+                                {{else}}
+                                    
+                                    <i class="large green gen-enclosed foundicon-checkmark bookingSeat"></i>
+                                    <i class="large red bookingCancel gen-enclosed foundicon-remove"></i>
+                                    <i class="large orange gen-enclosed foundicon-edit bookingEdit"></i>
+                                    
+                                    {{#if Number}}
+    <!--                                    <i class="large blue gen-enclosed foundicon-phone bookingPhone"></i>-->
+                                    {{/if}}
+                                {{/if}}
+                            {{/if}}
+                        {{/if}}
+                    </div>
+                    
+                </div>
+            </div>
+        {{/each}}
+    {{else}}
+        <div class="row" style="margin-top: 50px;"><center><h1 class="muted">NO BOOKINGS</h1></center></div>
+    {{/if}}
+</template>
+
+<template name="createDialog">
+    <div class="mask"> </div>
+    <div class="modal">
+        <div class="modal-body">
+          {{#if error}}
+           <h5>
+               {{error}}
+            </h5> 
+          {{/if}}
+        </div>
+          
+        <div class="modal-footer">
+          <a id="errorCancel" href="#" class="btn cancel">Cancel</a>
+          <a id="clearYes" href="#" class="btn btn-primary save">Okay</a>
+        </div>
+    </div>
+</template>
